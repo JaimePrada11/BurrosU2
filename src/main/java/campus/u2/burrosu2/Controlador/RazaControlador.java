@@ -36,7 +36,7 @@ public class RazaControlador {
         return d;
     }
 
-    public static List<Raza> listarDueños() throws SQLException {
+    public static List<Raza> listarRazas() throws SQLException {
         CRUD.setConexion(BdConexion.getConexion());
         List<Raza> listaRazas = new ArrayList<>();
 

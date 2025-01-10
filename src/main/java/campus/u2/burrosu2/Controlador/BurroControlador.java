@@ -26,12 +26,12 @@ public class BurroControlador {
 
     }
 
-    public static boolean actualizarBurro(Integer id, String nombre, Integer edad, Raza raza, Dueño dueño) throws SQLException {
-        Burro b = new Burro(id, nombre, edad, raza);
+    public static boolean actualizarBurro(Integer id, String nombre, Integer edad, Raza raza) throws SQLException {
         CRUD.setConexion(BdConexion.getConexion());
-        String Sentencia = "UPDATE Burros SET Nombre = ?, Edad = ?, IDRaza = ?, IDDueño = ? WHERE IDBurro = ?";
+        Burro b = new Burro(id, nombre, edad, raza);
+        String Sentencia = "UPDATE Burros SET Nombre = ?, Edad = ?, IDRaza = ? WHERE IDBurro = ?";
 
-        return CRUD.updateDB(Sentencia, nombre, edad, raza.getIdRaza());
+        return CRUD.updateDB(Sentencia, nombre, edad, raza.getIdRaza(), id);
 
     }
 

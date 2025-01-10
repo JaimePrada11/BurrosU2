@@ -114,9 +114,9 @@ FOR EACH ROW
 BEGIN
     IF NEW.Estado = 'Ganada' THEN
         UPDATE Participantes
-        SET SaldoDisponible = SaldoDisponible + NEW.MontoApostado
+        SET SaldoDisponible = SaldoDisponible + (NEW.MontoApostado * 1.25)  -- Actualizar con el 25% adicional
         WHERE IDParticipante = NEW.IDParticipante;
-    
+
     ELSEIF NEW.Estado = 'Perdida' THEN
         UPDATE Participantes
         SET SaldoDisponible = SaldoDisponible - NEW.MontoApostado
@@ -126,7 +126,6 @@ END;
 //
 
 DELIMITER ;
-
 
 INSERT INTO Dueños (Nombre, Cedula) VALUES 
 ('Juan Pérez', '12345678'),

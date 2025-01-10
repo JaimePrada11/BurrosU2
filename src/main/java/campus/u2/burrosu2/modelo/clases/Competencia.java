@@ -92,6 +92,14 @@ public class Competencia {
         return burrosParticipantes;
     }
 
+    public Map<Burro, Integer> getPuestosBurros() {
+        return puestosBurros;
+    }
+
+    public void setPuestosBurros(Map<Burro, Integer> puestosBurros) {
+        this.puestosBurros = puestosBurros;
+    }
+
     public void asignarPuesto(Burro burro, int puesto) {
         if (!burrosParticipantes.contains(burro)) {
             throw new IllegalArgumentException("El burro no está participando en la competencia.");
@@ -112,13 +120,8 @@ public class Competencia {
 
     @Override
     public String toString() {
-        return "Competencia{"
-                + "idCompetencia=" + idCompetencia
-                + ", nombre='" + nombre + '\''
-                + ", fecha=" + fecha
-                + ", lugar='" + lugar + '\''
-                + ", estado=" + (estado ? "Finalizada" : "En curso")
-                 +'}';
+        return "Competencia{" + "idCompetencia=" + idCompetencia + ", nombre=" + nombre + ", fecha=" + fecha + ", lugar=" + lugar + ", estado=" + estado + ", puestosBurros=" + puestosBurros + '}';
     }
+
 
 }

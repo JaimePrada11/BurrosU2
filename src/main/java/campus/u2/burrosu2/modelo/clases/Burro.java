@@ -13,6 +13,8 @@ public class Burro {
         this.edad = edad;
         this.raza = raza;
     }
+    
+    
 
     public Burro() {
     }

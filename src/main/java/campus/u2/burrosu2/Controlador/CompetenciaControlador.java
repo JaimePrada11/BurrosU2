@@ -9,9 +9,11 @@ import java.util.stream.Collectors;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -158,16 +160,32 @@ public class CompetenciaControlador {
         return false;
     }
 
-    public static List<Burro> obtenerTresPrimerosPuestos(Integer idCompetencia) throws SQLException {
-        Competencia competencia = buscarCompetenciaPorId(idCompetencia);
-        if (competencia == null) {
-            throw new SQLException("Competencia no encontrada");
+    public static List<Map.Entry<Burro, Integer>> obtenerTresPrimerosPuestos(Integer idCompetencia) throws SQLException {
+        CRUD.setConexion(BdConexion.getConexion());
+        String sql = "SELECT b.IDBurro, b.Nombre, bc.Puesto "
+                + "FROM BurrosCompetencia bc "
+                + "JOIN Burros b ON bc.IDBurro = b.IDBurro "
+                + "WHERE bc.IDCompetencia = ? "
+                + "ORDER BY bc.Puesto ASC "
+                + "LIMIT 3";
+
+        List<Map.Entry<Burro, Integer>> resultados = new ArrayList<>();
+
+        try (ResultSet rs = CRUD.consultarDB(sql, idCompetencia)) {
+            while (rs.next()) {
+                Burro burro = new Burro();
+                burro.setId(rs.getInt("IDBurro"));
+                burro.setNombre(rs.getString("Nombre"));
+                int puesto = rs.getInt("Puesto");
+
+                resultados.add(new AbstractMap.SimpleEntry<>(burro, puesto));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CompetenciaControlador.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
         }
 
-        return competencia.getBurros().stream()
-                .sorted(Comparator.comparing(competencia::obtenerPuesto))
-                .limit(3)
-                .collect(Collectors.toList());
+        return resultados;
     }
 
 }

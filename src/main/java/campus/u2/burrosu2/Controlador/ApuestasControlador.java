@@ -1,4 +1,3 @@
-
 package campus.u2.burrosu2.Controlador;
 
 import campus.u2.burrosu2.modelo.clases.Burro;
@@ -62,6 +61,32 @@ public class ApuestasControlador {
         return listaApuestas;
     }
 
+    public static List<Apuesta> listarApuestasPorCompetencia(int competencia) throws SQLException {
+        CRUD.setConexion(BdConexion.getConexion());
+        List<Apuesta> listaApuestas = new ArrayList<>();
+        String sql = "SELECT a.* " + "FROM Apuestas a "
+                + "JOIN Competencias c ON c.IDCompetencia = a.IDCompetencia "
+                + "WHERE c.IDCompetencia = ?";
+
+        ResultSet rs = CRUD.consultarDB(sql, competencia);
+        try {
+            while (rs.next()) {
+                Apuesta apuesta = new Apuesta();
+                apuesta.setIdApuesta(rs.getInt("IDApuesta"));
+                apuesta.setBurro(BurroControlador.obtenerBurro(rs.getInt("IDBurro")));
+                apuesta.setCompetencia(CompetenciaControlador.buscarCompetenciaPorId(rs.getInt("IDCompetencia")));
+                apuesta.setParticipante(ParticipanteControlador.obtenerParticipante(rs.getInt("IDParticipante")));
+                apuesta.setMontoApostado(rs.getDouble("MontoApostado"));
+                apuesta.setEstado(EstadoApuesta.valueOf(rs.getString("Estado").toUpperCase()));
+                listaApuestas.add(apuesta);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ApuestasControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return listaApuestas;
+    }
+
     public static List<Apuesta> listarApuestasPorParticipante(String cedula) throws SQLException {
         CRUD.setConexion(BdConexion.getConexion());
         List<Apuesta> listaApuestas = new ArrayList<>();
@@ -78,7 +103,7 @@ public class ApuestasControlador {
                 apuesta.setCompetencia(CompetenciaControlador.buscarCompetenciaPorId(rs.getInt("IDCompetencia")));
                 apuesta.setParticipante(ParticipanteControlador.obtenerParticipante(rs.getInt("IDParticipante")));
                 apuesta.setMontoApostado(rs.getDouble("MontoApostado"));
-                apuesta.setEstado(EstadoApuesta.valueOf(rs.getString("Estado")));
+                apuesta.setEstado(EstadoApuesta.valueOf(rs.getString("Estado").toUpperCase()));
                 listaApuestas.add(apuesta);
             }
         } catch (SQLException ex) {
@@ -88,60 +113,51 @@ public class ApuestasControlador {
         return listaApuestas;
     }
 
-    public static Apuesta obtenerUltimaApuestaPorParticipante(String cedula) throws SQLException {
-    CRUD.setConexion(BdConexion.getConexion());
-    String sql = "SELECT a.* " +
-                 "FROM Apuestas a " +
-                 "JOIN Participantes p ON a.IDParticipante = p.IDParticipante " +
-                 "WHERE p.Cedula = ? " +
-                 "ORDER BY a.FechaApuesta DESC " +
-                 "LIMIT 1";
-    
-    ResultSet rs = CRUD.consultarDB(sql, cedula);
-    Apuesta apuesta = null;
+    public static double calcularGananciasPorCompetencia(Integer idCompetencia) throws SQLException {
+        CRUD.setConexion(BdConexion.getConexion());
+        String sql = "SELECT SUM(a.MontoApostado) AS TotalPerdido "
+                + "FROM Apuestas a "
+                + "JOIN Competencias c ON a.IDCompetencia = c.IDCompetencia "
+                + "WHERE a.IDCompetencia = ? AND a.Estado = 'Perdida'";
 
-    try {
-        if (rs.next()) {
-            apuesta = new Apuesta();
-            apuesta.setIdApuesta(rs.getInt("IDApuesta"));
-            apuesta.setBurro(BurroControlador.obtenerBurro(rs.getInt("IDBurro")));
-            apuesta.setCompetencia(CompetenciaControlador.buscarCompetenciaPorId(rs.getInt("IDCompetencia")));
-            apuesta.setParticipante(ParticipanteControlador.obtenerParticipante(rs.getInt("IDParticipante")));
-            apuesta.setMontoApostado(rs.getDouble("MontoApostado"));
-            apuesta.setEstado(EstadoApuesta.valueOf(rs.getString("Estado")));
-        }
-    } catch (SQLException ex) {
-        Logger.getLogger(ApuestasControlador.class.getName()).log(Level.SEVERE, null, ex);
-    } 
+        ResultSet rs = CRUD.consultarDB(sql, idCompetencia);
+        double totalPerdido = 0.0;
 
-    return apuesta;
-}
-    
-public static double calcularGananciasApuestaPorCompetenciaYParticipante(Integer idCompetencia, String cedula) throws SQLException {
-    CRUD.setConexion(BdConexion.getConexion());
-    String sql = "SELECT a.MontoApostado, a.Estado " +
-                 "FROM Apuestas a " +
-                 "JOIN Participantes p ON a.IDParticipante = p.IDParticipante " +
-                 "WHERE p.Cedula = ? AND a.IDCompetencia = ? ";
-    ResultSet rs = CRUD.consultarDB(sql, cedula, idCompetencia);
-    double ganancia = 0.0;
-
-    try {
-        if (rs.next()) {
-            double montoApostado = rs.getDouble("MontoApostado");
-            String estado = rs.getString("Estado");
-
-            if ("GANADA".equalsIgnoreCase(estado)) {
-                ganancia = montoApostado + (montoApostado * 0.25); 
+        try {
+            if (rs.next()) {
+                totalPerdido = rs.getDouble("TotalPerdido");
             }
-        }
-    } catch (SQLException ex) {
-        Logger.getLogger(ApuestasControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(ApuestasControlador.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
+        } 
+
+        return totalPerdido;
     }
 
-    return ganancia;
-}
+    public static double calcularGananciasApuestaPorCompetenciaYParticipante(Integer idCompetencia, String cedula) throws SQLException {
+        CRUD.setConexion(BdConexion.getConexion());
+        String sql = "SELECT a.MontoApostado, a.Estado "
+                + "FROM Apuestas a "
+                + "JOIN Participantes p ON a.IDParticipante = p.IDParticipante "
+                + "WHERE p.Cedula = ? AND a.IDCompetencia = ? ";
+        ResultSet rs = CRUD.consultarDB(sql, cedula, idCompetencia);
+        double ganancia = 0.0;
 
+        try {
+            if (rs.next()) {
+                double montoApostado = rs.getDouble("MontoApostado");
+                String estado = rs.getString("Estado");
 
-    
+                if ("GANADA".equalsIgnoreCase(estado)) {
+                    ganancia = montoApostado + (montoApostado * 0.25);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ApuestasControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return ganancia;
+    }
+
 }

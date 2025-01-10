@@ -4,13 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class CRUD {
 
     private static Connection conexion;
-    public static Statement stmt = null;
-    public static ResultSet rs = null;
 
     public static Connection getConexion() {
         return conexion;
@@ -83,40 +80,6 @@ public class CRUD {
             return ps.executeQuery();
         } catch (SQLException e) {
             throw new RuntimeException("Error al consultar la base de datos", e);
-        }
-    }
-
-    public static boolean setAutoCommitBD(boolean parametro) {
-        try {
-            conexion.setAutoCommit(parametro);
-        } catch (SQLException sqlex) {
-            System.out.println("Error al configurar el autoCommit " + sqlex.getMessage());
-            return false;
-        }
-        return true;
-    }
-
-    public static void cerrarConexion() {
-        closeConexion(conexion);
-    }
-
-    public static boolean commitBD() {
-        try {
-            conexion.commit();
-            return true;
-        } catch (SQLException sqlex) {
-            System.out.println("Error al hacer commit " + sqlex.getMessage());
-            return false;
-        }
-    }
-
-    public static boolean rollbackBD() {
-        try {
-            conexion.rollback();
-            return true;
-        } catch (SQLException sqlex) {
-            System.out.println("Error al hacer rollback " + sqlex.getMessage());
-            return false;
         }
     }
 }

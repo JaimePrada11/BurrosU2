@@ -6,20 +6,26 @@ import java.sql.SQLException;
 
 public class BdConexion {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/BurrosU2";
-    private static final String USER = "root";
-    private static final String PASSWORD = "J12345";
-    public static Connection conexion = null;
+    private static final String url = "jdbc:mysql://localhost:3306/BurrosU2";
+    private static final String user = "root";
+    private static final String password = "J12345";
+    private static Connection conexion = null;
 
-    public static Connection getConnection() {
+    private BdConexion() {
+    }
+
+    public static Connection getConexion() {
+
         try {
-            conexion = DriverManager.getConnection(URL, USER, PASSWORD);
-            if (conexion != null) {
-                System.out.println("Conexion exitosa");
+            conexion = DriverManager.getConnection(url, user, password);
+            if(conexion != null) {
+                //System.out.println("Conexion exitosa");
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return conexion;
     }
+
+   
 }

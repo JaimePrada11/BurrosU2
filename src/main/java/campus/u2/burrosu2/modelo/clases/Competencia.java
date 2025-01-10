@@ -17,10 +17,21 @@ public class Competencia {
     private Map<Burro, Integer> puestosBurros;
 
     public Competencia() {
+        this.burrosParticipantes = new ArrayList<>();
+        this.puestosBurros = new HashMap<>();
     }
 
     public Competencia(int idCompetencia, String nombre, LocalDate fecha, String lugar) {
         this.idCompetencia = idCompetencia;
+        this.nombre = nombre;
+        this.fecha = fecha;
+        this.lugar = lugar;
+        this.estado = false;
+        this.burrosParticipantes = new ArrayList<>();
+        this.puestosBurros = new HashMap<>();
+    }
+
+    public Competencia(String nombre, LocalDate fecha, String lugar) {
         this.nombre = nombre;
         this.fecha = fecha;
         this.lugar = lugar;
@@ -74,7 +85,7 @@ public class Competencia {
     }
 
     public void eliminarBurro(Burro burro) {
-        burrosParticipantes.add(burro);
+        burrosParticipantes.remove(burro);
     }
 
     public List<Burro> getBurros() {
@@ -107,8 +118,7 @@ public class Competencia {
                 + ", fecha=" + fecha
                 + ", lugar='" + lugar + '\''
                 + ", estado=" + (estado ? "Finalizada" : "En curso")
-                + ", puestosBurros=" + puestosBurros
-                + +'}';
+                 +'}';
     }
 
 }

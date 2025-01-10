@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS Apuestas (
     IDCompetencia INT NOT NULL,
     IDParticipante INT NOT NULL,
     MontoApostado DECIMAL(10, 2) NOT NULL,
-    Estado ENUM('Pendiente', 'Ganada', 'Perdida') DEFAULT 'Pendiente',
+    Estado ENUM('Pendiente', 'Cancelada', 'Ganada', 'Perdida') DEFAULT 'Pendiente',
     FOREIGN KEY (IDBurro) REFERENCES Burros(IDBurro),
     FOREIGN KEY (IDCompetencia) REFERENCES Competencias(IDCompetencia),
     FOREIGN KEY (IDParticipante) REFERENCES Participantes(IDParticipante)

@@ -18,6 +18,10 @@ public class Apuesta {
         this.estado = EstadoApuesta.PENDIENTE;
     }
 
+    public Apuesta() {
+       
+    }
+
     public Integer getIdApuesta() {
         return idApuesta;
     }

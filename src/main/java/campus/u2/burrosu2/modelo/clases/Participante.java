@@ -19,6 +19,11 @@ public class Participante extends Persona {
         this.saldoDisponible = saldoDisponible;
     }
 
+    public Participante(Double saldoDisponible, String nombre, String cedula) {
+        super(nombre, cedula);
+        this.saldoDisponible = saldoDisponible;
+    }
+    
     public Integer getIdParticipante() {
         return idParticipante;
     }

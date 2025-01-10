@@ -13,6 +13,10 @@ public class Raza {
         this.nombre = nombre;
     }
 
+    public Raza(String nombre) {
+        this.nombre = nombre;
+    }
+
     public Integer getIdRaza() {
         return idRaza;
     }
